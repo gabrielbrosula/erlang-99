@@ -1,5 +1,17 @@
 -module(lst).
--export([last/1, penultimate/1, kth/2, len/1, reverse/1, is_palindrome/1, flatten/1,compress/1]).
+-export([
+    last/1, 
+    penultimate/1,
+    kth/2, 
+    len/1, 
+    reverse/1, 
+    is_palindrome/1, 
+    flatten/1,
+    compress/1, 
+    pack/1,
+    encode/1,
+    encode_modified/1
+]).
 
 % P01
 last([]) ->
@@ -63,7 +75,6 @@ flatten_helper(L, Acc) ->
 % 
 % Prepend the last-known "different" element to the accumulator.
 % Reverse the accumulator in the end.
-% 
 compress(L) -> reverse(compress_helper(L, [])).
 
 compress_helper([], _) -> [];
@@ -82,13 +93,36 @@ compress_helper([Head | Tail], Acc) ->
         true -> compress_helper(Tail, [Head | Acc])
     end.
 
+% P09
+% 
+% Prepend a sublist containing the different element to the accumulator,
+% otherwise append new element to the head of the accumulator.
+% Reverse the accumulator in the end.
+pack(L) -> reverse(pack_helper(L, [])).
+
+pack_helper([], Acc) -> Acc;
+pack_helper([A], []) -> [[A]];
+pack_helper([Head | Tail], []) -> pack_helper(Tail, [[Head]]);
+pack_helper([Head | Tail], Acc) ->
+    [HeadOfAcc|Tacc] = Acc,
+    [Elem|_] = HeadOfAcc,
+    if 
+        % Append new element to head of accumulator
+        Head == Elem -> pack_helper(Tail, [[Head|HeadOfAcc] | Tacc]);
+
+        % Prepend the sublist with the new element
+        true -> pack_helper(Tail, [[Head] | Acc])
+    end.
+
+% P10
+encode(L) -> [{len(X), Val} || [Val|_] = X <- pack(L)].
 
 
+% P11
+encode_modified(L) -> [ get_modified_result(Tuple) || Tuple <- encode(L)].
 
-
-
-
-
+get_modified_result({1, Val}) -> Val;
+get_modified_result({Count, Val}) -> {Count, Val}.
 
 
 
