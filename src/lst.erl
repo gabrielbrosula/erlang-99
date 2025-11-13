@@ -1,5 +1,5 @@
 -module(lst).
--export([last/1, penultimate/1, kth/2, len/1, reverse/1, is_palindrome/1, flatten/1]).
+-export([last/1, penultimate/1, kth/2, len/1, reverse/1, is_palindrome/1, flatten/1,compress/1]).
 
 % P01
 last([]) ->
@@ -58,6 +58,44 @@ flatten_helper(L, Acc) ->
         true ->
             flatten_helper(T, Acc ++ [H])
     end.
+
+% P08
+% 
+% Prepend the last-known "different" element to the accumulator.
+% Reverse the accumulator in the end.
+% 
+compress(L) -> reverse(compress_helper(L, [])).
+
+compress_helper([], _) -> [];
+compress_helper([A], []) -> [A];
+compress_helper([Head | Tail], []) -> compress_helper(Tail, [Head]);
+compress_helper([A], Acc) -> 
+    [HeadOfAcc | _] = Acc,
+    if 
+        A == HeadOfAcc -> Acc; 
+        true -> [A | Acc]
+    end;
+compress_helper([Head | Tail], Acc) ->
+    [HeadOfAcc|_] = Acc,
+    if 
+        Head == HeadOfAcc -> compress_helper(Tail, Acc);
+        true -> compress_helper(Tail, [Head | Acc])
+    end.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % General utility functions
 msg_empty_list() -> io:format("Empty list~n").
