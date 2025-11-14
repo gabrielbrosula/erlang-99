@@ -15,7 +15,9 @@
     encode_direct/1,
     duplicate/1,
     duplicate_direct/1,
-    duplicate_n/2
+    duplicate_n/2,
+    drop/2,
+    split/2
 ]).
 
 % P01
@@ -159,9 +161,39 @@ dupe_helper([], Acc) -> Acc;
 dupe_helper([H|T], Acc) -> dupe_helper(T,[H|[H|Acc]]).
 
 % P15
+%
+% TODO: Implement direct solution for duplicating n times 
 duplicate_n(N, L) -> flatten([construct_list(N, Val, []) || Val <- L]).
 
-% TODO: Implement direct solution for duplicating n times 
+
+% P16
+drop(N, L) -> reverse(drop_helper(N, L, [], 1)).
+
+drop_helper(_, [], Acc, _) -> Acc;
+drop_helper(N, [H|T], Acc, Count) ->
+    if 
+        Count == N ->
+            drop_helper(N, T, Acc, 1);
+        true ->
+            drop_helper(N, T, [H|Acc], Count + 1)
+    end.
+
+% P17
+split(FirstListLength, [_|_]=L) -> split_helper(FirstListLength, L, [], 0).
+
+% Iterate the list L FirstListLength times to build the accumulator.
+% Once you reach Count == FirstListLength, return [Acc, Rest of list at that point]
+
+split_helper(FirstListLength, L, Acc, Count) when Count == FirstListLength ->
+    [reverse(Acc),L];
+split_helper(FirstListLength, [H|T], Acc, Count) when Count < FirstListLength ->
+    split_helper(FirstListLength, T, [H|Acc], Count + 1).
+    
+
+
+
+
+
 
 % General utility functions
 msg_empty_list() -> io:format("Empty list~n").
