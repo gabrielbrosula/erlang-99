@@ -17,7 +17,8 @@
     duplicate_direct/1,
     duplicate_n/2,
     drop/2,
-    split/2
+    split/2,
+    slice/3
 ]).
 
 % P01
@@ -183,15 +184,23 @@ split(FirstListLength, [_|_]=L) -> split_helper(FirstListLength, L, [], 0).
 
 % Iterate the list L FirstListLength times to build the accumulator.
 % Once you reach Count == FirstListLength, return [Acc, Rest of list at that point]
-
 split_helper(FirstListLength, L, Acc, Count) when Count == FirstListLength ->
     [reverse(Acc),L];
 split_helper(FirstListLength, [H|T], Acc, Count) when Count < FirstListLength ->
     split_helper(FirstListLength, T, [H|Acc], Count + 1).
     
 
+% P18
+slice(Start, End, _) when Start > End -> io:format("Invalid Arguments. Start is greater than End.~n");
+slice(Start, End, L) -> reverse(slice_helper(Start, End, L, [], 0)).
 
+slice_helper(_, End, _, Acc, Idx) when Idx == End -> Acc;
+slice_helper(Start, End, [_|T], Acc, Idx) when Idx < Start -> 
+    slice_helper(Start, End, T, Acc, Idx + 1);
+slice_helper(Start, End, [H|T], Acc, Idx) when Idx >= Start, Idx < End ->
+     slice_helper(Start, End, T, [H|Acc], Idx + 1).
 
+% P19
 
 
 
