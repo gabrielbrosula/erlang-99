@@ -14,7 +14,8 @@
     decode/1,
     encode_direct/1,
     duplicate/1,
-    duplicate_direct/1
+    duplicate_direct/1,
+    duplicate_n/2
 ]).
 
 % P01
@@ -145,7 +146,7 @@ construct_list(Count, Val, Acc) ->
 
 % P13
 % 
-% TODO: Direct solution for run-length encoding
+% TODO: Implement direct solution for run-length encoding
 encode_direct(_) -> 'Not implemented yet'.
 
 
@@ -156,6 +157,11 @@ duplicate_direct(L) -> reverse(dupe_helper(L, [])).
 
 dupe_helper([], Acc) -> Acc;
 dupe_helper([H|T], Acc) -> dupe_helper(T,[H|[H|Acc]]).
+
+% P15
+duplicate_n(N, L) -> flatten([construct_list(N, Val, []) || Val <- L]).
+
+% TODO: Implement direct solution for duplicating n times 
 
 % General utility functions
 msg_empty_list() -> io:format("Empty list~n").
