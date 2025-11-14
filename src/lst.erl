@@ -10,7 +10,8 @@
     compress/1, 
     pack/1,
     encode/1,
-    encode_modified/1
+    encode_modified/1,
+    decode/1
 ]).
 
 % P01
@@ -124,11 +125,20 @@ encode_modified(L) -> [ get_modified_result(Tuple) || Tuple <- encode(L)].
 get_modified_result({1, Val}) -> Val;
 get_modified_result({Count, Val}) -> {Count, Val}.
 
+% P12
+decode(L) -> reverse(decode_helper(L, [])).
 
+decode_helper([], Acc) -> Acc;
+decode_helper([H|T], Acc) -> 
+    {Count, Val} = H,
+    NewAcc = construct_list(Count, Val, Acc),
+    decode_helper(T, NewAcc).
 
-
-
-
+construct_list(Count, Val, Acc) ->
+    if 
+        Count > 0 -> construct_list(Count - 1, Val, [Val|Acc]);
+        true -> Acc
+    end.
 
 
 % General utility functions
