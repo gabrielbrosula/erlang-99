@@ -19,7 +19,10 @@
     drop/2,
     split/2,
     slice/3,
-    rotate/2
+    rotate/2,
+    remove_at/2,
+    insert_at/3,
+    range/2
 ]).
 
 % P01
@@ -218,6 +221,41 @@ rotate_helper(N, [H|T]=L, Acc, Idx) when N > 0 ->
 
 % Rotating with N < 0 is the same as rotating the first (len(L) + N) elements left.
 rotate_helper(N, L, _, _) when N < 0 -> rotate_helper(len(L) + N, L, [], 0).
+
+% P20
+remove_at(N, L) -> 
+    {ResultList, DroppedVal}=remove_at_helper(N, L, [], 0, none),
+    {reverse(ResultList), DroppedVal}.
+
+
+remove_at_helper(_, [], Acc, _, none) -> Acc;
+remove_at_helper(N, [H|T], Acc, Count, Val) ->
+    if 
+        Count == N ->
+            remove_at_helper(N, T, Acc, 1, H);
+        true ->
+            remove_at_helper(N, T, [H|Acc], Count + 1, Val)
+    end;
+remove_at_helper(_, [], Acc, _, Val) -> {Acc, Val}.
+
+% P21
+insert_at(Elem, Idx, L) -> reverse(insert_at_helper(Elem, Idx, L, [], 0)).
+
+insert_at_helper(_, _, [], Acc, _) -> Acc;
+insert_at_helper(Elem, Idx, [H|T], Acc, Count) ->
+    if 
+        % Elem has to be between Acc and H
+        Count == Idx -> insert_at_helper(Elem, Idx, T, [H|[Elem|Acc]], Count + 1);
+        true -> insert_at_helper(Elem, Idx, T, [H|Acc], Count + 1)
+    end.
+
+% P22
+range(Start, End) -> reverse(range_helper(Start, End, [])).
+
+range_helper(CurIdx, End, Acc) when CurIdx > End -> Acc;
+range_helper(CurIdx, End, Acc) when CurIdx =< End -> range_helper(CurIdx + 1, End, [CurIdx|Acc]).
+
+
 
 
 % General utility functions
