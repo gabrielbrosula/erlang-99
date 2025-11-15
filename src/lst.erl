@@ -10,9 +10,6 @@
     compress/1, 
     pack/1,
     encode/1,
-<<<<<<< HEAD
-    encode_modified/1
-=======
     encode_modified/1,
     decode/1,
     encode_direct/1,
@@ -21,8 +18,8 @@
     duplicate_n/2,
     drop/2,
     split/2,
-    slice/3
->>>>>>> main
+    slice/3,
+    rotate/2
 ]).
 
 % P01
@@ -132,11 +129,6 @@ encode(L) -> [{len(X), Val} || [Val|_] = X <- pack(L)].
 
 % P11
 encode_modified(L) -> [ get_modified_result(Tuple) || Tuple <- encode(L)].
-<<<<<<< HEAD
-
-get_modified_result({1, Val}) -> Val;
-get_modified_result({Count, Val}) -> {Count, Val}.
-=======
 
 get_modified_result({1, Val}) -> Val;
 get_modified_result({Count, Val}) -> {Count, Val}.
@@ -187,7 +179,6 @@ drop_helper(N, [H|T], Acc, Count) ->
         true ->
             drop_helper(N, T, [H|Acc], Count + 1)
     end.
->>>>>>> main
 
 % P17
 split(FirstListLength, [_|_]=L) -> split_helper(FirstListLength, L, [], 0).
@@ -210,8 +201,23 @@ slice_helper(Start, End, [_|T], Acc, Idx) when Idx < Start ->
 slice_helper(Start, End, [H|T], Acc, Idx) when Idx >= Start, Idx < End ->
      slice_helper(Start, End, T, [H|Acc], Idx + 1).
 
-% P19
+% P19 - Rotate a list N elements to the left
+% rotate(3, [1,2,3,4,5,6,7]).
+% [4,5,6,7,1,2,3]
+% 
+% rotate(-3, [1,2,3,4,5,6,7]).
+% [5,6,7,1,2,3,4]
+rotate(N, L) -> rotate_helper(N, L, [], 0).
 
+rotate_helper(N,L,_,_) when N == 0 -> L;
+rotate_helper(N, [H|T]=L, Acc, Idx) when N > 0 ->
+    if 
+        Idx == N ->  L ++ reverse(Acc);
+        true -> rotate_helper(N, T, [H|Acc], Idx + 1)
+    end;
+
+% Rotating with N < 0 is the same as rotating the first (len(L) + N) elements left.
+rotate_helper(N, L, _, _) when N < 0 -> rotate_helper(len(L) + N, L, [], 0).
 
 
 % General utility functions
