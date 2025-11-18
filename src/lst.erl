@@ -22,7 +22,9 @@
     rotate/2,
     remove_at/2,
     insert_at/3,
-    range/2
+    range/2,
+    random_select/2,
+    lotto/2
 ]).
 
 % P01
@@ -232,7 +234,7 @@ remove_at_helper(_, [], Acc, _, none) -> Acc;
 remove_at_helper(N, [H|T], Acc, Count, Val) ->
     if 
         Count == N ->
-            remove_at_helper(N, T, Acc, 1, H);
+            remove_at_helper(N, T, Acc, Count + 1, H);
         true ->
             remove_at_helper(N, T, [H|Acc], Count + 1, Val)
     end;
@@ -255,7 +257,28 @@ range(Start, End) -> reverse(range_helper(Start, End, [])).
 range_helper(CurIdx, End, Acc) when CurIdx > End -> Acc;
 range_helper(CurIdx, End, Acc) when CurIdx =< End -> range_helper(CurIdx + 1, End, [CurIdx|Acc]).
 
+% P23
+%
+% Use remove_at to drop N elements, since remove_at returns the dropped value.
+random_select(N, L) -> random_select_helper(L, [], N).
 
+random_select_helper(_, Acc, 0) -> Acc;
+random_select_helper(List, Acc, Countdown) -> 
+    Len = len(List),
+
+    % rand:uniform produces an integer in the range [1, N)
+    DropIdx = rand:uniform(Len - 1),
+    io:format("ListLen: ~p, DropIndex: ~p~n", [Len, DropIdx]),
+    
+    {NewList, DroppedElem} = remove_at(DropIdx, List),
+    io:format("Countdown Index: ~p, NewList: ~p, Acc: ~p~n", [Countdown, NewList, Acc]),
+    random_select_helper(NewList, [DroppedElem|Acc], Countdown - 1).
+
+% P24: Lotto - Draw M different random numbers from the set 1..N.
+lotto(M, N) -> lotto_helper(M, N, []).
+
+lotto_helper(0, _,  Acc) -> Acc;
+lotto_helper(M, N, Acc) -> lotto_helper(M - 1, N, [rand:uniform(N)|Acc]).
 
 
 % General utility functions
