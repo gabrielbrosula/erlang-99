@@ -24,7 +24,8 @@
     insert_at/3,
     range/2,
     random_select/2,
-    lotto/2
+    lotto/2,
+    random_permute/1
 ]).
 
 % P01
@@ -267,11 +268,9 @@ random_select_helper(List, Acc, Countdown) ->
     Len = len(List),
 
     % rand:uniform produces an integer in the range [1, N)
-    DropIdx = rand:uniform(Len - 1),
-    io:format("ListLen: ~p, DropIndex: ~p~n", [Len, DropIdx]),
+    DropIdx = rand:uniform(Len) - 1,
     
     {NewList, DroppedElem} = remove_at(DropIdx, List),
-    io:format("Countdown Index: ~p, NewList: ~p, Acc: ~p~n", [Countdown, NewList, Acc]),
     random_select_helper(NewList, [DroppedElem|Acc], Countdown - 1).
 
 % P24: Lotto - Draw M different random numbers from the set 1..N.
@@ -280,6 +279,8 @@ lotto(M, N) -> lotto_helper(M, N, []).
 lotto_helper(0, _,  Acc) -> Acc;
 lotto_helper(M, N, Acc) -> lotto_helper(M - 1, N, [rand:uniform(N)|Acc]).
 
+% P25
+random_permute(L) -> random_select(len(L), L).
 
 % General utility functions
 msg_empty_list() -> io:format("Empty list~n").
